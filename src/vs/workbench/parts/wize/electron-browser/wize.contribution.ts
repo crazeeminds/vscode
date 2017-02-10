@@ -5,7 +5,7 @@
 
 'use strict';
 
-import nls = require('vs/nls');
+import * as nls from 'vs/nls';
 import { TPromise } from 'vs/base/common/winjs.base';
 import { Action } from 'vs/base/common/actions';
 import { Registry } from 'vs/platform/platform';
@@ -71,7 +71,6 @@ if (WizePreview.enabled) {
 		'wize',
 		50
 	);
-
 	Registry.as<ViewletRegistry>(ViewletExtensions.Viewlets)
 		.registerViewlet(viewletDescriptor);
 
