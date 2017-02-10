@@ -17,11 +17,8 @@ import { PLAINTEXT_LANGUAGE_IDENTIFIER } from 'vs/editor/common/modes/modesRegis
 import { IWizeService, IWizeProvider } from './wize';
 
 export class WizeService implements IWizeService {
-
 	_serviceBrand;
-
 	private activeProviderContextKey: IContextKey<string | undefined>;
-
 	private _activeProvider: IWizeProvider | undefined;
 
 	get activeProvider(): IWizeProvider | undefined {
@@ -43,13 +40,19 @@ export class WizeService implements IWizeService {
 	}
 
 	private _providers: IWizeProvider[] = [];
-	get providers(): IWizeProvider[] { return [...this._providers]; }
+	get providers(): IWizeProvider[] {
+		return [...this._providers];
+	}
 
 	private _onDidChangeProvider = new Emitter<IWizeProvider>();
-	get onDidChangeProvider(): Event<IWizeProvider> { return this._onDidChangeProvider.event; }
+	get onDidChangeProvider(): Event<IWizeProvider> {
+		return this._onDidChangeProvider.event;
+	}
 
 	private _inputBoxModel: IModel;
-	get inputBoxModel(): IModel { return this._inputBoxModel; }
+	get inputBoxModel(): IModel {
+		return this._inputBoxModel;
+	}
 
 	constructor(
 		@IContextKeyService contextKeyService: IContextKeyService,

@@ -49,6 +49,9 @@ export class MenuId {
 	static readonly SCMTitle = new MenuId('11');
 	static readonly SCMResourceGroupContext = new MenuId('12');
 	static readonly SCMResourceContext = new MenuId('13');
+	static readonly WizeTitle = new MenuId('14');
+	static readonly WizeResourceGroupContext = new MenuId('15');
+	static readonly WizeResourceContext = new MenuId('16');
 
 	constructor(private _id: string) {
 

@@ -10,31 +10,29 @@ import { TPromise } from 'vs/base/common/winjs.base';
 import { IWindowService } from 'vs/platform/windows/common/windows';
 import { IMessageService } from 'vs/platform/message/common/message';
 
-export default class SCMPreview {
-
-	private static readonly _enabled = window.localStorage.getItem('enablePreviewSCM') === 'true';
+export default class WizePreview {
+	private static readonly _enabled = window.localStorage.getItem('enablePreviewWize') === 'true';
 
 	static get enabled(): boolean {
 		return this._enabled;
 	}
 
 	static set enabled(enabled: boolean) {
-		window.localStorage.setItem('enablePreviewSCM', enabled ? 'true' : 'false');
+		window.localStorage.setItem('enablePreviewWize', enabled ? 'true' : 'false');
 	}
 }
 
-export class EnableSCMPreviewAction extends Action {
-
-	static ID = 'enablescmpreview';
-	static LABEL = 'Enable Preview SCM';
+export class EnableWizePreviewAction extends Action {
+	static ID = 'enablewizepreview';
+	static LABEL = 'Enable Preview Wize';
 
 	constructor(
-		id = EnableSCMPreviewAction.ID,
-		label = EnableSCMPreviewAction.LABEL,
+		id = EnableWizePreviewAction.ID,
+		label = EnableWizePreviewAction.LABEL,
 		@IWindowService private windowService: IWindowService,
 		@IMessageService private messageService: IMessageService,
 	) {
-		super(EnableSCMPreviewAction.ID, EnableSCMPreviewAction.LABEL, '', true);
+		super(EnableWizePreviewAction.ID, EnableWizePreviewAction.LABEL, '', true);
 	}
 
 	run(): TPromise<void> {
@@ -45,23 +43,22 @@ export class EnableSCMPreviewAction extends Action {
 			return undefined;
 		}
 
-		SCMPreview.enabled = true;
+		WizePreview.enabled = true;
 		return this.windowService.reloadWindow();
 	}
 }
 
-export class DisableSCMPreviewAction extends Action {
-
-	static ID = 'disablescmpreview';
-	static LABEL = 'Disable Preview SCM';
+export class DisableWizePreviewAction extends Action {
+	static ID = 'disablewizepreview';
+	static LABEL = 'Disable Preview Wize';
 
 	constructor(
-		id = DisableSCMPreviewAction.ID,
-		label = DisableSCMPreviewAction.LABEL,
+		id = DisableWizePreviewAction.ID,
+		label = DisableWizePreviewAction.LABEL,
 		@IWindowService private windowService: IWindowService,
 		@IMessageService private messageService: IMessageService,
 	) {
-		super(DisableSCMPreviewAction.ID, DisableSCMPreviewAction.LABEL, '', true);
+		super(DisableWizePreviewAction.ID, DisableWizePreviewAction.LABEL, '', true);
 	}
 
 	run(): TPromise<void> {
@@ -72,7 +69,7 @@ export class DisableSCMPreviewAction extends Action {
 			return undefined;
 		}
 
-		SCMPreview.enabled = false;
+		WizePreview.enabled = false;
 		return this.windowService.reloadWindow();
 	}
 }

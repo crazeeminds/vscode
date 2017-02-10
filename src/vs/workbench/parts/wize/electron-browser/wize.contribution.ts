@@ -26,7 +26,7 @@ import WizePreview, { DisableWizePreviewAction, EnableWizePreviewAction } from '
 class OpenWizeViewletAction extends ToggleViewletAction {
 
 	static ID = VIEWLET_ID;
-	static LABEL = localize('toggleGitViewlet', "Show Git");
+	static LABEL = localize('toggleWizeViewlet', 'Show Wize');
 
 	constructor(id: string, label: string, @IViewletService viewletService: IViewletService, @IWorkbenchEditorService editorService: IWorkbenchEditorService) {
 		super(id, label, VIEWLET_ID, viewletService, editorService);
@@ -65,11 +65,11 @@ Registry.as<IWorkbenchContributionsRegistry>(WorkbenchExtensions.Workbench)
 if (WizePreview.enabled) {
 	const viewletDescriptor = new ViewletDescriptor(
 		'vs/workbench/parts/wize/electron-browser/wizeViewlet',
-		'WizeViewlet',
+		'SCMViewlet',
 		VIEWLET_ID,
-		localize('wize', "Wize"),
+		localize('wize', 'Wize'),
 		'wize',
-		112
+		45
 	);
 
 	Registry.as<ViewletRegistry>(ViewletExtensions.Viewlets)
@@ -80,22 +80,22 @@ if (WizePreview.enabled) {
 
 	// Register Action to Open Viewlet
 	Registry.as<IWorkbenchActionRegistry>(WorkbenchActionExtensions.WorkbenchActions).registerWorkbenchAction(
-		new SyncActionDescriptor(OpenWizeViewletAction, VIEWLET_ID, localize('toggleWizeViewlet', "Show Wize"), {
+		new SyncActionDescriptor(OpenWizeViewletAction, VIEWLET_ID, localize('toggleSCMViewlet', 'Show Wize'), {
 			primary: null,
 			win: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KEY_G },
 			linux: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KEY_G },
 			mac: { primary: KeyMod.WinCtrl | KeyMod.Shift | KeyCode.KEY_G }
 		}),
-		'View: Show Wize',
-		localize('view', "View")
+		'View: Show SCM',
+		localize('view', 'View')
 	);
 
 	Registry.as<IWorkbenchActionRegistry>(WorkbenchActionExtensions.WorkbenchActions)
-		.registerWorkbenchAction(new SyncActionDescriptor(SwitchProvider, SwitchProvider.ID, SwitchProvider.LABEL), 'Wize: Switch Provider', 'Wize');
+		.registerWorkbenchAction(new SyncActionDescriptor(SwitchProvider, SwitchProvider.ID, SwitchProvider.LABEL), 'SCM: Switch Provider', 'SCM');
 
 	Registry.as<IWorkbenchActionRegistry>(WorkbenchActionExtensions.WorkbenchActions)
-		.registerWorkbenchAction(new SyncActionDescriptor(DisableWizePreviewAction, DisableWizePreviewAction.ID, DisableWizePreviewAction.LABEL), 'Wize: Disable Preview Wize', 'Wize');
+		.registerWorkbenchAction(new SyncActionDescriptor(DisableWizePreviewAction, DisableWizePreviewAction.ID, DisableWizePreviewAction.LABEL), 'SCM: Disable Preview SCM', 'SCM');
 } else {
 	Registry.as<IWorkbenchActionRegistry>(WorkbenchActionExtensions.WorkbenchActions)
-		.registerWorkbenchAction(new SyncActionDescriptor(EnableWizePreviewAction, EnableWizePreviewAction.ID, EnableWizePreviewAction.LABEL), 'Wize: Enable Preview Wize', 'Wize');
+		.registerWorkbenchAction(new SyncActionDescriptor(EnableWizePreviewAction, EnableWizePreviewAction.ID, EnableWizePreviewAction.LABEL), 'SCM: Enable Preview SCM', 'SCM');
 }

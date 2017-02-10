@@ -86,7 +86,7 @@ interface ResourceTemplate {
 	actionBar: ActionBar;
 }
 
-class ResourceRenderer implements IRenderer<ISCMResource, ResourceTemplate> {
+class ResourceRenderer implements IRenderer<IWizeResource, ResourceTemplate> {
 
 	static TEMPLATE_ID = 'resource';
 	get templateId(): string { return ResourceRenderer.TEMPLATE_ID; }
@@ -187,14 +187,14 @@ export class WizeViewlet extends Viewlet {
 		parent.addClass('wize-viewlet');
 
 		const root = parent.getHTMLElement();
-		const editorContainer = append(root, $('.scm-editor'));
+		const editorContainer = append(root, $('.wize-editor'));
 
-		this.editor = this.instantiationService.createInstance(SCMEditor, editorContainer);
+		this.editor = this.instantiationService.createInstance(WizeEditor, editorContainer);
 		this.disposables.push(this.editor);
 
-		this.disposables.push(this.scmService.inputBoxModel.onDidChangeContent(() => this.layout()));
+		this.disposables.push(this.wizeService.inputBoxModel.onDidChangeContent(() => this.layout()));
 
-		this.listContainer = append(root, $('.scm-status.show-file-icons'));
+		this.listContainer = append(root, $('.wize-status.show-file-icons'));
 		const delegate = new Delegate();
 
 		const actionItemProvider = action => this.getActionItem(action);
@@ -208,21 +208,21 @@ export class WizeViewlet extends Viewlet {
 
 		chain(this.list.onSelectionChange)
 			.map(e => e.elements[0])
-			.filter(e => !!e && !!(e as ISCMResource).uri)
+			.filter(e => !!e && !!(e as IWizeResource).uri)
 			.on(this.open, this, this.disposables);
 
 		this.list.onContextMenu(this.onListContextMenu, this, this.disposables);
 		this.disposables.push(this.list);
 
-		this.setActiveProvider(this.scmService.activeProvider);
-		this.scmService.onDidChangeProvider(this.setActiveProvider, this, this.disposables);
+		this.setActiveProvider(this.wizeService.activeProvider);
+		this.wizeService.onDidChangeProvider(this.setActiveProvider, this, this.disposables);
 		this.themeService.onDidColorThemeChange(this.update, this, this.disposables);
 
 		return TPromise.as(null);
 	}
 
 	private update(): void {
-		const provider = this.scmService.activeProvider;
+		const provider = this.wizeService.activeProvider;
 
 		if (!provider) {
 			this.list.splice(0, this.list.length);
@@ -230,7 +230,7 @@ export class WizeViewlet extends Viewlet {
 		}
 
 		const elements = provider.resources
-			.reduce<(ISCMResourceGroup | ISCMResource)[]>((r, g) => [...r, g, ...g.resources], []);
+			.reduce<(IWizeResourceGroup | IWizeResource)[]>((r, g) => [...r, g, ...g.resources], []);
 
 		this.list.splice(0, this.list.length, elements);
 	}
@@ -259,8 +259,8 @@ export class WizeViewlet extends Viewlet {
 		this.editor.focus();
 	}
 
-	private open(e: ISCMResource): void {
-		this.scmService.activeProvider.open(e);
+	private open(e: IWizeResource): void {
+		this.wizeService.activeProvider.open(e);
 	}
 
 	getActions(): IAction[] {
@@ -275,15 +275,15 @@ export class WizeViewlet extends Viewlet {
 		return createActionItem(action, this.keybindingService, this.messageService);
 	}
 
-	private onListContextMenu(e: IListMouseEvent<ISCMResourceGroup | ISCMResource>): void {
+	private onListContextMenu(e: IListMouseEvent<IWizeResourceGroup | IWizeResource>): void {
 		const element = e.element;
 		let actions: IAction[];
 
-		if ((element as ISCMResource).uri) {
-			const resource = element as ISCMResource;
+		if ((element as IWizeResource).uri) {
+			const resource = element as IWizeResource;
 			actions = this.menus.getResourceContextActions(resource);
 		} else {
-			const resourceGroup = element as ISCMResourceGroup;
+			const resourceGroup = element as IWizeResourceGroup;
 			actions = this.menus.getResourceGroupContextActions(resourceGroup);
 		}
 

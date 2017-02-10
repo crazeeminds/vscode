@@ -96,7 +96,7 @@ export class WizeMenus implements IDisposable {
 		});
 	}
 
-	private getWizeResourceURI(resource: ISCMResource): URI {
+	private getWizeResourceURI(resource: IWizeResource): URI {
 		return URI.from({
 			scheme: 'wize',
 			authority: this.activeProviderContextKey.get(),
