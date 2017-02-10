@@ -59,6 +59,12 @@ const keys: Key[] = [
 		command: 'workbench.view.debug'
 	},
 	{
+		id: 'wize',
+		arrow: '&larr;',
+		label: localize('welcomeOverlay.wize', "Design and Build"),
+		command: 'workbench.view.wize'
+	},
+	{
 		id: 'extensions',
 		arrow: '&larr;',
 		label: localize('welcomeOverlay.extensions', "Manage extensions"),
