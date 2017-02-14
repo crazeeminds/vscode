@@ -28,6 +28,9 @@ export const CONTEXT_NOT_IN_DEBUG_REPL: ContextKeyExpr = CONTEXT_IN_DEBUG_REPL.t
 export const CONTEXT_ON_FIRST_DEBUG_REPL_LINE = new RawContextKey<boolean>('onFirsteDebugReplLine', false);
 export const CONTEXT_ON_LAST_DEBUG_REPL_LINE = new RawContextKey<boolean>('onLastDebugReplLine', false);
 export const CONTEXT_BREAKPOINT_WIDGET_VISIBLE = new RawContextKey<boolean>('breakpointWidgetVisible', false);
+export const CONTEXT_BREAKPOINTS_FOCUSED = new RawContextKey<boolean>('breakpointsFocused', false);
+export const CONTEXT_WATCH_EXPRESSIONS_FOCUSED = new RawContextKey<boolean>('watchExpressionsFocused', false);
+export const CONTEXT_VARIABLES_FOCUSED = new RawContextKey<boolean>('variablesFocused', false);
 
 export const EDITOR_CONTRIBUTION_ID = 'editor.contrib.debug';
 export const DEBUG_SCHEME = 'debug';
@@ -75,7 +78,7 @@ export interface ISession {
 	variables(args: DebugProtocol.VariablesArguments): TPromise<DebugProtocol.VariablesResponse>;
 	evaluate(args: DebugProtocol.EvaluateArguments): TPromise<DebugProtocol.EvaluateResponse>;
 
-	configuration: { type: string, capabilities: DebugProtocol.Capabilities };
+	capabilities: DebugProtocol.Capabilities;
 	disconnect(restart?: boolean, force?: boolean): TPromise<DebugProtocol.DisconnectResponse>;
 	custom(request: string, args: any): TPromise<DebugProtocol.Response>;
 	onDidEvent: Event<DebugProtocol.Event>;
@@ -360,6 +363,8 @@ export interface IConfigurationManager {
 	 */
 	getCompound(name: string): ICompound;
 
+	configFileUri: uri;
+
 	/**
 	 * Opens the launch.json file. Creates if it does not exist.
 	 */
@@ -454,6 +459,11 @@ export interface IDebugService {
 	 * Removes all repl expressions.
 	 */
 	removeReplExpressions(): void;
+
+	/**
+	 * Appends the passed string to the debug repl.
+	 */
+	logToRepl(value: string): void;
 
 	/**
 	 * Adds a new watch expression and evaluates it against the debug adapter.

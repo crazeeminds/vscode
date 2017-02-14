@@ -14,7 +14,7 @@ import strings = require('vs/base/common/strings');
 import filters = require('vs/base/common/filters');
 import DOM = require('vs/base/browser/dom');
 import URI from 'vs/base/common/uri';
-import uuid = require('vs/base/common/uuid');
+import { defaultGenerator } from 'vs/base/common/idGenerator';
 import types = require('vs/base/common/types');
 import { Action } from 'vs/base/common/actions';
 import { IIconLabelOptions } from 'vs/base/browser/ui/iconLabel/iconLabel';
@@ -47,6 +47,7 @@ import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
 import { IWorkspaceContextService } from 'vs/platform/workspace/common/workspace';
 import { IContextKeyService, RawContextKey, IContextKey } from 'vs/platform/contextkey/common/contextkey';
 import { IHistoryService } from 'vs/workbench/services/history/common/history';
+import { IListService } from 'vs/platform/list/browser/listService';
 
 const HELP_PREFIX = '?';
 
@@ -106,7 +107,8 @@ export class QuickOpenController extends WorkbenchComponent implements IQuickOpe
 		@IConfigurationService private configurationService: IConfigurationService,
 		@IHistoryService private historyService: IHistoryService,
 		@IInstantiationService private instantiationService: IInstantiationService,
-		@IPartService private partService: IPartService
+		@IPartService private partService: IPartService,
+		@IListService private listService: IListService
 	) {
 		super(QuickOpenController.ID);
 
@@ -265,7 +267,7 @@ export class QuickOpenController extends WorkbenchComponent implements IQuickOpe
 		const autoFocus = options.autoFocus;
 
 		// Use a generated token to avoid race conditions from long running promises
-		const currentPickerToken = uuid.generateUuid();
+		const currentPickerToken = defaultGenerator.nextId();
 		this.currentPickerToken = currentPickerToken;
 
 		// Create upon first open
@@ -279,12 +281,14 @@ export class QuickOpenController extends WorkbenchComponent implements IQuickOpe
 					onShow: () => this.handleOnShow(true),
 					onHide: (reason) => this.handleOnHide(true, reason)
 				}, {
-					inputPlaceHolder: options.placeHolder || ''
+					inputPlaceHolder: options.placeHolder || '',
+					keyboardSupport: false
 				},
 				this.telemetryService
 			);
 
 			const pickOpenContainer = this.pickOpenWidget.create();
+			this.toUnbind.push(this.listService.register(this.pickOpenWidget.getTree()));
 			DOM.addClass(pickOpenContainer, 'show-file-icons');
 			this.positionQuickOpenWidget();
 		}
@@ -539,12 +543,14 @@ export class QuickOpenController extends WorkbenchComponent implements IQuickOpe
 					onHide: (reason) => this.handleOnHide(false, reason),
 					onFocusLost: () => !this.closeOnFocusLost
 				}, {
-					inputPlaceHolder: this.hasHandler(HELP_PREFIX) ? nls.localize('quickOpenInput', "Type '?' to get help on the actions you can take from here") : ''
+					inputPlaceHolder: this.hasHandler(HELP_PREFIX) ? nls.localize('quickOpenInput', "Type '?' to get help on the actions you can take from here") : '',
+					keyboardSupport: false
 				},
 				this.telemetryService
 			);
 
 			const quickOpenContainer = this.quickOpenWidget.create();
+			this.toUnbind.push(this.listService.register(this.quickOpenWidget.getTree()));
 			DOM.addClass(quickOpenContainer, 'show-file-icons');
 			this.positionQuickOpenWidget();
 		}
@@ -673,7 +679,7 @@ export class QuickOpenController extends WorkbenchComponent implements IQuickOpe
 		const instantProgress = handlerDescriptor && handlerDescriptor.instantProgress;
 
 		// Use a generated token to avoid race conditions from long running promises
-		const currentResultToken = uuid.generateUuid();
+		const currentResultToken = defaultGenerator.nextId();
 		this.currentResultToken = currentResultToken;
 
 		// Reset Progress
