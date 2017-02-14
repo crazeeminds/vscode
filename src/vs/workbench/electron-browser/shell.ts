@@ -96,6 +96,7 @@ import { BareFontInfo } from 'vs/editor/common/config/fontInfo';
 import { readFontInfo } from 'vs/editor/browser/config/configuration';
 import SCMPreview from 'vs/workbench/parts/scm/browser/scmPreview';
 import 'vs/platform/opener/browser/opener.contribution';
+import WizePreview from '../parts/wize/browser/wizePreview';
 
 /**
  * Services that we require for the Shell
@@ -338,6 +339,16 @@ export class WorkbenchShell {
 		this.extensionService.onReady().done(() => {
 			this.timerService.afterExtensionLoad = new Date();
 		});
+
+		// wize
+		const disabledWizeExtensions = WizePreview.enabled ? [] : ['vscode.wize'];
+		this.extensionService = instantiationService.createInstance(MainProcessExtensionService, disabledWizeExtensions);
+		serviceCollection.set(IExtensionService, this.extensionService);
+		extensionHostProcessWorker.start(this.extensionService);
+		this.extensionService.onReady().done(() => {
+			this.timerService.afterExtensionLoad = new Date();
+		});
+		// end
 
 		serviceCollection.set(ICommandService, new SyncDescriptor(CommandService));
 

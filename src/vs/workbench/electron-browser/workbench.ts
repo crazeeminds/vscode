@@ -93,6 +93,8 @@ import { IContextMenuService } from 'vs/platform/contextview/browser/contextView
 import { IEnvironmentService } from 'vs/platform/environment/common/environment';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
 import { IWindowConfiguration } from 'vs/workbench/electron-browser/common';
+import { IWizeService } from 'vs/workbench/services/wize/common/wize';
+import { WizeService } from 'vs/workbench/services/wize/common/wizeService';
 
 export const MessagesVisibleContext = new RawContextKey<boolean>('globalMessageVisible', false);
 export const EditorsVisibleContext = new RawContextKey<boolean>('editorIsOpen', false);
@@ -518,6 +520,9 @@ export class Workbench implements IPartService {
 
 		// SCM Service
 		serviceCollection.set(ISCMService, new SyncDescriptor(SCMService));
+
+		// Wize Service
+		serviceCollection.set(IWizeService, new SyncDescriptor(WizeService));
 
 		// Text Model Resolver Service
 		serviceCollection.set(ITextModelResolverService, new SyncDescriptor(TextModelResolverService));

@@ -6,7 +6,7 @@
 'use strict';
 
 import 'vs/css!./media/wizeViewlet';
-import { TPromise } from 'vs/base/common/winjs.base';
+import { Promise, TPromise } from 'vs/base/common/winjs.base';
 import { chain } from 'vs/base/common/event';
 import { IDisposable, dispose, empty as EmptyDisposable } from 'vs/base/common/lifecycle';
 import { Builder, Dimension } from 'vs/base/browser/builder';
@@ -34,6 +34,8 @@ import { IThemeService } from 'vs/workbench/services/themes/common/themeService'
 import { isDarkTheme } from 'vs/platform/theme/common/themes';
 import { WizeEditor } from './wizeEditor';
 import { IModelService } from 'vs/editor/common/services/modelService';
+import { IView, IController } from '../../git/browser/views/view';
+// import { NoWorkspaceView } from '../browser/views/noworkspace/noworkspaceView';
 
 interface SearchInputEvent extends Event {
 	target: HTMLInputElement;
@@ -139,7 +141,7 @@ class Delegate implements IDelegate<IWizeResourceGroup | IWizeResource> {
 	}
 }
 
-export class WizeViewlet extends Viewlet {
+export class WizeViewlet extends Viewlet implements IController {
 
 	private cachedDimension: Dimension;
 	private editor: WizeEditor;
@@ -148,6 +150,8 @@ export class WizeViewlet extends Viewlet {
 	private menus: WizeMenus;
 	private providerChangeDisposable: IDisposable = EmptyDisposable;
 	private disposables: IDisposable[] = [];
+	private views: { [id: string]: IView; };
+	private $el: Builder;
 
 	constructor(
 		@ITelemetryService telemetryService: ITelemetryService,
@@ -167,6 +171,41 @@ export class WizeViewlet extends Viewlet {
 
 		this.menus = this.instantiationService.createInstance(WizeMenus);
 		this.disposables.push(this.menus);
+
+		/*this.views = <any>{};
+		let views: IView[] = [
+			this.instantiationService.createInstance(NoWorkspaceView, this.getActionRunner()),
+		];
+
+		views.forEach(v => {
+			this.views[v.ID] = v;
+			this.disposables.push(v);
+		});
+
+		this.setView('noworkspace');*/
+	}
+
+	public setView(id: string): Promise {
+		let view = this.views[id];
+
+		if (!view) {
+			return TPromise.wrapError(new Error('Could not find view.'));
+		}
+
+		let promise = TPromise.as(null);
+
+		let element = view.element;
+		this.updateTitleArea();
+
+		let el = this.$el.getHTMLElement();
+		while (el.firstChild) {
+			el.removeChild(el.firstChild);
+		}
+
+		el.appendChild(element);
+		view.layout(this.cachedDimension);
+
+		return promise.then(() => view.setVisible(true));
 	}
 
 	private setActiveProvider(activeProvider: IWizeProvider | undefined): void {
